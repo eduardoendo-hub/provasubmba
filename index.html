@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Provas SUB — MBA Impacta</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0c0c0c;--surface:#141414;--surface2:#1c1c1c;--border:#2a2a2a;--border2:#383838;--text:#fff;--text2:#a0a0a0;--text3:#555;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--radius:12px;--radius-sm:8px}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;width:100%;max-width:540px;display:flex;flex-direction:column;gap:24px}
+.header{text-align:center}
+.tag{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--border2);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:500;color:var(--text2);letter-spacing:.04em;margin-bottom:20px}
+.tag-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.header h1{font-size:38px;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-bottom:10px}
+.header h1 span{color:var(--text2);font-weight:300}
+.header p{font-size:14px;color:var(--text3);line-height:1.65}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px}
+.field{margin-bottom:16px}
+.field:last-of-type{margin-bottom:0}
+label{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:7px}
+input,select{width:100%;height:46px;padding:0 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;outline:none;appearance:none;transition:border-color .15s,background .15s}
+input::placeholder{color:var(--text3)}
+input:focus,select:focus{border-color:var(--border2);background:#222}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23555' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer}
+select option{background:#1c1c1c;color:#fff}
+.divider{height:1px;background:var(--border);margin:20px 0}
+.btn{width:100%;height:50px;background:#fff;color:#000;border:none;border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s,transform .1s}
+.btn:hover:not(:disabled){opacity:.85}
+.btn:active:not(:disabled){transform:scale(.99)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+.btn .spinner{width:16px;height:16px;border:2px solid rgba(0,0,0,.15);border-top-color:#000;border-radius:50%;animation:spin .6s linear infinite;display:none}
+.btn.loading .spinner{display:block}
+.btn.loading .btn-text{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.status{display:none;align-items:center;gap:8px;padding:11px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;margin-top:12px;border:1px solid transparent}
+.status.show{display:flex}
+.status.info{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.2);color:#60a5fa}
+.status.error{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2);color:#f87171}
+.status.success{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.2);color:#4ade80}
+.status-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;animation:blink 1.4s infinite}
+.status.success .status-dot,.status.error .status-dot{animation:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.output{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.output-head{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.output-info{display:flex;align-items:center;gap:10px}
+.output-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);border-radius:100px;padding:2px 10px;font-size:11px;font-weight:600;color:#4ade80}
+.output-name{font-size:12px;font-weight:500;color:var(--text2)}
+.output-btns{display:flex;gap:6px}
+.btn-xs{height:29px;padding:0 12px;border-radius:6px;font-size:12px;font-weight:500;font-family:'Inter',sans-serif;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--text2);transition:all .15s}
+.btn-xs:hover{border-color:#fff;color:#fff}
+.output-body{padding:28px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.85;color:#b0b0b0;white-space:pre-wrap;max-height:560px;overflow-y:auto}
+.output-body::-webkit-scrollbar{width:4px}
+.output-body::-webkit-scrollbar-track{background:transparent}
+.output-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.footer{text-align:center;font-size:11px;color:var(--text3)}
+@media(max-width:600px){.header h1{font-size:28px}.card{padding:20px}.output-body{padding:18px;font-size:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="tag"><div class="tag-dot"></div>MBA Impacta &middot; Claude AI</div>
+    <h1>Gerador de<br><span>Provas SUB</span></h1>
+    <p>Selecione o curso e informe a disciplina.<br>A prova é gerada com os tópicos reais da grade curricular.</p>
+  </div>
+
+  <div class="card">
+    <div class="field">
+      <label>Curso de MBA</label>
+      <select id="curso" onchange="updateDisciplinas()">
+        <option value="">Selecione o curso...</option>
+        <option value="AI-Engineering & Multi-Agents">AI-Engineering &amp; Multi-Agents</option>
+        <option value="Artificial Intelligence For Business">Artificial Intelligence For Business</option>
+        <option value="Cloud Computing & DevOps">Cloud Computing &amp; DevOps</option>
+        <option value="Cyber Security">Cyber Security</option>
+        <option value="Data Engineering">Data Engineering</option>
+        <option value="Data Science & Advanced Analytics">Data Science &amp; Advanced Analytics</option>
+        <option value="Engenharia de Software">Engenharia de Software</option>
+        <option value="AI-Driven Full Stack Engineering">AI-Driven Full Stack Engineering</option>
+        <option value="Gestão de Projetos PMI® e Metodologias Ágeis e Híbridas">Gestão de Projetos PMI® e Metodologias Ágeis</option>
+        <option value="Product Management & Digital Growth">Product Management &amp; Digital Growth</option>
+        <option value="AI-Powered Digital Marketing & Growth">AI-Powered Digital Marketing &amp; Growth</option>
+        <option value="Arquitetura de Soluções Digitais">Arquitetura de Soluções Digitais</option>
+        <option value="CTO Tech Leadership Program">CTO Tech Leadership Program</option>
+        <option value="Digital Infrastructure & Cloud Operations">Digital Infrastructure &amp; Cloud Operations</option>
+        <option value="Executivo em Liderança Estratégica de TI">Executivo em Liderança Estratégica de TI</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Disciplina</label>
+      <select id="disciplina">
+        <option value="">Selecione o curso primeiro...</option>
+      </select>
+    </div>
+    <div class="divider"></div>
+    <button class="btn" id="generateBtn" onclick="generate()">
+      <div class="spinner"></div>
+      <span class="btn-text">Gerar Prova Substitutiva</span>
+    </button>
+    <div class="status" id="status">
+      <div class="status-dot"></div>
+      <span id="statusText"></span>
+    </div>
+  </div>
+
+  <div class="output" id="output">
+    <div class="output-head">
+      <div class="output-info">
+        <div class="output-pill">&#10003; Gerada</div>
+        <div class="output-name" id="outputName"></div>
+      </div>
+      <div class="output-btns">
+        <button class="btn-xs" onclick="copyOut(this)">Copiar</button>
+        <button class="btn-xs" onclick="downloadOut()">Baixar</button>
+      </div>
+    </div>
+    <div class="output-body" id="outputBody"></div>
+  </div>
+
+  <div class="footer">Impacta &middot; Gerador de Provas SUB &middot; Powered by Claude Sonnet</div>
+</div>
+
+<script>
+const API_KEY = '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';
+
+// ── Grade curricular completa embutida ──────────────────────────────────────
+const GRADE = {
+  "AI-Engineering & Multi-Agents": {
+    "AI Foundations": "História e evolução da IA; Tipos de aprendizado de máquina; Ética e viés algorítmico",
+    "Deep Learning": "Redes neurais profundas (CNNs e RNNs); Transfer learning; Regularização e otimização",
+    "Advanced Generative AI": "Arquitetura Transformer e LLMs; Prompt engineering avançado; Fine-tuning de modelos fundacionais",
+    "Data Engineering and RAG for AI Agents": "Pipelines de dados e embeddings; Bancos de dados vetoriais; Arquitetura RAG completa",
+    "Generative AI Types and Applications": "Modelos de texto, imagem e áudio; Aplicações por setor; Avaliação de saídas generativas",
+    "Agent Orchestration with LangChain and CrewAI": "Agentes com LangChain; Equipes colaborativas com CrewAI; Observabilidade e depuração",
+    "Multi-Agent Systems, Deployment, and Scaling": "Arquiteturas multi-agente; Deploy em cloud (Docker / Kubernetes); Monitoramento e resiliência",
+    "Low-Code Prototyping and Agent Automation": "Automação com n8n; Integração com APIs e SaaS; Prototipagem rápida sem código",
+    "Autonomous Agent Architecture and Cognitive Systems": "Arquiteturas cognitivas (ReAct, Reflexion); Memória persistente em agentes; Metacognição e autoaperfeiçoamento",
+    "Enterprise AI Agent Platforms: Copilot, AWS, and Azure": "Copilot Studio, AWS Bedrock e Azure AI; Comparativo de plataformas enterprise; Critérios de seleção corporativa",
+    "Governance, Security, and Ethics in Autonomous Systems": "Governança e auditabilidade de IA; Segurança: prompt injection e jailbreak; LGPD, GDPR e EU AI Act",
+    "AI Applications": "Aplicações end-to-end com IA; Integração de LLMs via APIs; Métricas de produto e ROI",
+    "Product Design with Antigravity": "Metodologia Antigravity; Prototipagem e validação de produto; MVP e roadmap de escalonamento",
+    "Emotional Intelligence & Soft Skills for Effective Leadership": "Fundamentos de Inteligência Emocional; Comunicação e liderança; Empatia e segurança psicológica; Mindfulness para líderes",
+    "Disruptive Innovation & Startup Leadership": "Fundamentos da Inovação Disruptiva; Mentalidade empreendedora; Lean Startup e MVP; Fundraising e escala",
+    "Mastering Leadership Skills": "Visão estratégica e execução; Comunicação de alto impacto; Times de alta performance; Liderança adaptativa",
+    "Digital Influence & Media Training": "Personal branding digital; Comunicação pública e media training; Gestão de crises; Storytelling digital",
+    "Digital Growth & AI-Driven Marketing": "Evolução do marketing digital; IA no marketing; Performance marketing; SEO e crescimento orgânico"
+  },
+  "Artificial Intelligence For Business": {
+    "AI Foundation": "Mapeamento de oportunidades; Non generative models; Machine Learning (ML); Generative models; NLP; Retrieval Augmented Generation; Optimization; Emerging platforms",
+    "Data Processing": "Ciência da Gestão 2.0; Data Science and Analytics; Ferramentas de análise de dados; Enriquecimento de dados; DataOps",
+    "Foundation Models (FMS)": "Fundamentos; Ciclo de vida; Engenharia de Prompt; Desempenho",
+    "Programming Basis": "Conceitos Básicos; Plataformas e Frameworks de desenvolvimento; Utilização de APIs; Low Code / No Code",
+    "Adaptative Machine Learning": "Séries temporais; Redes Neurais Dinâmicas; Modelos ARMA, ARIMA e SARIMA",
+    "Data Management": "Cultura Data Driven; Data Visualization and Storytelling with Data; Bancos de dados NoSQL; Análise preditiva + Análise de decisão; Análise em tempo real + Streaming analytics; Otimização de dados com ML",
+    "Deep Learning": "Avanços em Deep Learning; CNNs; RNNs e LSTMs; GANs; Aprendizado por reforço",
+    "Machine Learning": "Coleta e preparação dos dados; Agrupamento de dados e Modelos de regressão; Tratando dados de muitas dimensões; Treinamento do modelo (Supervisionado, Não supervisionado e por Reforço); Ajuste fino (fine-tuning); Descobrindo padrões em dados; Classificação por trás dos panos; Otimização de modelos; MLOps",
+    "Advanced GenAI": "Multiagent generative systems (MAGs); Autonomous agents; Autonomous decision-making systems",
+    "Gen AI types and applications": "Language Generative Models (ChatGPT); Image Generative Models (Dall.E); Virtual Assistants - chatbots; Next generation databases",
+    "Prompt Engineering": "Estrutura; Contextualização; Tom e estilo; Testes; Limitações",
+    "Transformer Models - Large Language Models (LLM)": "Desafios em LLM; Melhores práticas; Ferramentas e frameworks",
+    "AI Applications": "Estudos de casos em finanças, saúde, marketing e logística; Chatbots; Visão Computacional; IA e IoT; Personalização; Armadilhas",
+    "AI Project Management": "Ferramentas de produtividade; Otimização de planejamento; Automação de tarefas repetitivas; Análise de dados e tomada de decisão; Measuring AI business value (Métricas e KPIs)",
+    "Ethics and Governance": "Transparência nas decisões; Responsabilidade; Privacidade e Segurança; Impacto Social; Acessibilidade; LGPD",
+    "Emotional Intelligence & Soft Skills for Effective Leadership": "Fundamentos de Inteligência Emocional; Comunicação e liderança; Empatia e segurança psicológica; Mindfulness para líderes",
+    "Disruptive Innovation & Startup Leadership": "Fundamentos da Inovação Disruptiva; Mentalidade empreendedora; Lean Startup e MVP; Fundraising e escala",
+    "Mastering Leadership Skills": "Visão estratégica e execução; Comunicação de alto impacto; Times de alta performance; Liderança adaptativa",
+    "Digital Influence & Media Training": "Personal branding digital; Comunicação pública e media training; Gestão de crises; Storytelling digital",
+    "Digital Growth & AI-Driven Marketing": "Evolução do marketing digital; IA no marketing; Performance marketing; SEO e crescimento orgânico"
+  },
+  "Cloud Computing & DevOps": {
+    "Cloud Architect": "Network and Security Concepts; Control ports, protocols, and network traffic; High Availability and Fault Tolerance; 3-Tier Architecture Implementation; Load balancing; Horizontal and vertical scaling",
+    "Cloud Computing Foundation": "IaaS, PaaS e SaaS; Architecture Public e Private Cloud; Public Cloud by AWS, Azure and Google",
+    "Cloud Financial Management": "Pilares de Cloud Financial; Billing, Reporting, and Monitoring; Architecting for Cost: Compute, Networking, Storage, Databases; Cost Governance; Otimização de custos",
+    "Cloud Security": "Cloud Security Fundamentals; Cloud Shared Responsibility Model; Management Plane and Business Continuity; Application Security; Data Security and Encryption; Identity, Entitlement and Access Management; DevSecOps; Security Policies",
+    "Cloud Infrastructure Automation": "DevXP; Terraform - Provision Infrastructure; Ansible - Manage Infrastructure; Infrastructure Pipeline",
+    "Continuous Integration and Continuous Delivery": "DevOps Toolchain; Pipeline DevOps; Git e GitHub; CI/CD Tools; Testing e Deployment",
+    "DevOps and SRE Fundamentals": "Cultura DevOps; CAMS: Pilares do DevOps; Framework SRE; Postmortem; SLOs, SLIs e Error Budget; Platform Engineer",
+    "DevSecOps": "DevOps e DevSecOps; SAST, DAST, IAST; RASP; Integração com ferramentas de Segurança; Git e GitHub",
+    "Generative AI for DevOps Engineers": "Introdução à IA; Aplicações da IA em Cloud e DevOps; Ferramentas de IA aplicadas ao DevOps; Redução de tempo e aumento de disponibilidade com IA",
+    "Container Technologies": "Introdução à tecnologia de containers e microserviços; Docker e Podman; Orquestração de Containers; Vulnerabilidades em Containers",
+    "Database Reliability Engineer": "Experience and Architecture; NoSQL Database; High Availability e Load Balancing; Replication e Disaster Recovery; Database Observability",
+    "Microservices Architecture": "Evolução das arquiteturas de software; Datastore and Data Management; Design Patterns e Boas Práticas; Scaling e Cloud Deployment; Service Discovery e Load Balancing; Resilience e Fault Tolerance; Security e API Management; Logging, Monitoring e Orchestration",
+    "Emotional Intelligence & Soft Skills for Effective Leadership": "Fundamentos de Inteligência Emocional; Comunicação e liderança; Empatia e segurança psicológica; Mindfulness para líderes",
+    "Disruptive Innovation & Startup Leadership": "Fundamentos da Inovação Disruptiva; Mentalidade empreendedora; Lean Startup e MVP; Fundraising e escala",
+    "Mastering Leadership Skills": "Visão estratégica e execução; Comunicação de alto impacto; Times de alta performance; Liderança adaptativa",
+    "Digital Growth & AI-Driven Marketing": "Evolução do marketing digital; IA no marketing; Performance marketing; SEO e crescimento orgânico"
+  },
+  "Cyber Security": {
+    "Cloud Computing Security": "Mercado Atual de Cloud; Principais Provedores de Nuvem; Segurança em Cloud Computing (ISO27017); Cloud Security Alliance Cloud Controls Matrix",
+    "Cyber Security Architect": "Requisitos de segurança; Alinhamento entre áreas; Modelagem de ameaças; Cryptography; Secure Coding Concepts",
+    "DevSecOps": "DevOps e DevSecOps; SAST, DAST, IAST, RASP; Integração com ferramentas de Segurança; Git e GitHub",
+    "Segurança de Infraestrutura": "Políticas de Segurança; Gerenciamento de riscos; Monitoramento do CSP",
+    "Ethical Hacking e Penetration Testing": "Metodologias de avaliação de segurança; Análise de vulnerabilidades; Testes de invasão em rede e web/mobile",
+    "Incident Response": "Gestão de incidentes de segurança; Análise forense digital; Resposta a ataques em tempo real",
+    "Compliance e Regulações": "LGPD; GDPR; ISO 27001; Frameworks de governança de segurança",
+    "Purple Team Operations": "Red Team vs Blue Team; Breach and Attack Simulation (BAS); Implantação de Purple Teams",
+    "Emotional Intelligence & Soft Skills for Effective Leadership": "Fundamentos de Inteligência Emocional; Comunicação e liderança; Empatia e segurança psicológica",
+    "Disruptive Innovation & Startup Leadership": "Fundamentos da Inovação Disruptiva; Mentalidade empreendedora; Lean Startup e MVP",
+    "Mastering Leadership Skills": "Visão estratégica e execução; Comunicação de alto impacto; Times de alta performance"
+  },
+  "Data Engineering": {
+    "Data Engineering Foundations": "Fundamentos de engenharia de dados; Arquitetura de pipelines; ETL e ELT; Data Lake e Data Warehouse",
+    "NoSQL and Distributed Databases": "SQL vs NoSQL; Search Index Databases; Bancos In-Memory; Bancos Colunares e de Séries Temporais; Bancos de Documentos; Bancos de Grafos; Teorema CAP",
+    "Scalable Big Data Architecture": "Batch Processing vs Streaming Processing; Lambda Architecture; Kappa Architecture; Design de Streaming Application Systems; Data Lake, Delta Lake, Lakehouse e Data Mesh",
+    "Data Processing": "Ciência da Gestão 2.0; Data Science and Analytics; Ferramentas de análise de dados; Enriquecimento de dados; DataOps",
+    "Cloud Solutions for Data Engineering": "Soluções de dados em AWS, Azure e GCP; DBaaS; Escalabilidade e segurança em cloud",
+    "Data Governance and Quality": "Qualidade de dados; Catalogação; Privacidade e LGPD; Governança de dados",
+    "Machine Learning for Data Engineers": "MLOps; Pipelines de dados para ML; Monitoramento de modelos em produção",
+    "Emotional Intelligence & Soft Skills for Effective Leadership": "Fundamentos de Inteligência Emocional; Comunicação e liderança; Empatia e segurança psicológica",
+    "Disruptive Innovation & Startup Leadership": "Fundamentos da Inovação Disruptiva; Mentalidade empreendedora; Lean Startup e MVP",
+    "Mastering Leadership Skills": "Visão estratégica e execução; Comunicação de alto impacto; Times de alta performance"
+  },
+  "Data Science & Advanced Analytics": {
+    "Scalable Big Data Architecture": "Batch Processing vs Streaming Processing; Lambda Architecture; Kappa Architecture; Design de Streaming Application Systems; Data Lake, Delta Lake, Lakehouse e Data Mesh",
+    "Microservices Architecture": "Evolução das arquiteturas de software; Design Patterns; Scaling e Cloud Deployment; Resilience e Fault Tolerance; Security e API Management",
+    "Data Visualization & Storytelling": "Relevância da visualização de dados; Tipos de gráficos e representações; Técnicas avançadas (heatmaps, treemaps, dashboards); Storytelling com dados; Power BI, Tableau, Looker Studio",
+    "Computer Vision": "CNNs a Vision Transformers; Transfer learning; Qualidade de dados e etiquetagem; Deploy: edge, on-prem e cloud; Segurança e ética em visão computacional",
+    "Machine Learning": "Coleta e preparação dos dados; Agrupamento e Modelos de regressão; Alta dimensionalidade; Aprendizado supervisionado, não supervisionado e por reforço; Fine-tuning; MLOps",
+    "Advanced Analytics": "Análise preditiva; Análise prescritiva; Modelos estatísticos avançados; Séries temporais",
+    "Emotional Intelligence & Soft Skills for Effective Leadership": "Fundamentos de Inteligência Emocional; Comunicação e liderança; Empatia e segurança psicológica",
+    "Disruptive Innovation & Startup Leadership": "Fundamentos da Inovação Disruptiva; Mentalidade empreendedora; Lean Startup e MVP",
+    "Mastering Leadership Skills": "Visão estratégica e execução; Comunicação de alto impacto; Times de alta performance"
+  },
+  "Engenharia de Software": {
+    "Software Architecture": "Padrões arquiteturais; Arquitetura orientada a eventos; DDD; Clean Architecture",
+    "Microservices Architecture": "Evolução das arquiteturas; Design Patterns; Scaling e Cloud Deployment; Resilience e Fault Tolerance; Security e API Management",
+    "DevOps and SRE Fundamentals": "Cultura DevOps; CAMS; Framework SRE; SLOs, SLIs e Error Budget; Platform Engineer",
+    "Continuous Integration and Continuous Delivery": "DevOps Toolchain; Pipeline DevOps; Git e GitHub; CI/CD Tools; Testing e Deployment",
+    "Cloud Infrastructure Automation": "DevXP; Terraform; Ansible; Infrastructure Pipeline",
+    "Database Reliability Engineer": "NoSQL Database; High Availability e Load Balancing; Replication e Disaster Recovery; Database Observability",
+    "Agile and Scaling Frameworks": "Scrum; Kanban; SAFe; LeSS; Team Topologies; OKRs",
+    "Emotional Intelligence & Soft Skills for Effective Leadership": "Fundamentos de Inteligência Emocional; Comunicação e liderança; Empatia e segurança psicológica",
+    "Disruptive Innovation & Startup Leadership": "Fundamentos da Inovação Disruptiva; Mentalidade empreendedora; Lean Startup e MVP",
+    "Mastering Leadership Skills": "Visão estratégica e execução; Comunicação de alto impacto; Times de alta performance"
+  },
+  "AI-Driven Full Stack Engineering": {
+    "Frontend Development with AI": "React e frameworks modernos; IA aplicada ao frontend; UX e acessibilidade; Low-code e no-code",
+    "Backend Development": "APIs RESTful e GraphQL; Node.js e arquiteturas server-side; Autenticação e segurança; Microsserviços",
+    "AI Integration for Full Stack": "Integração de LLMs em aplicações; Prompt engineering para devs; Agentes de IA em apps web; RAG em sistemas full stack",
+    "Cloud and DevOps for Full Stack": "Deploy em cloud; CI/CD para aplicações web; Containers e Kubernetes; Monitoramento",
+    "Database Design": "SQL e NoSQL; Modelagem de dados; ORMs; Performance de queries",
+    "Mobile Development": "React Native; PWA; Integração de IA em mobile",
+    "Emotional Intelligence & Soft Skills for Effective Leadership": "Fundamentos de Inteligência Emocional; Comunicação e liderança; Empatia e segurança psicológica",
+    "Disruptive Innovation & Startup Leadership": "Fundamentos da Inovação Disruptiva; Mentalidade empreendedora; Lean Startup e MVP",
+    "Mastering Leadership Skills": "Visão estratégica e execução; Comunicação de alto impacto; Times de alta performance"
+  },
+  "Gestão de Projetos PMI® e Metodologias Ágeis e Híbridas": {
+    "Fundamentos de Gerenciamento de Projetos PMI": "PMBOK Guide; Grupos de processos; Áreas de conhecimento; Iniciação e planejamento de projetos",
+    "Gestão Financeira & OKR": "Orçamento e Gestão de Custos em Projetos; Análise de Valor Agregado (EVA/EVM); KPIs; OKRs aplicados à Gestão de Projetos; Métricas de Satisfação do Cliente (NPS, CSAT, CES); Métricas em projetos ágeis, híbridos e preditivos",
+    "Scaling & Agile Frameworks": "Fundamentos de Agilidade e Cultura Ágil; Scrum na Prática (eventos, papéis, story points); PBB - Product Backlog Building; Kanban e Fluxo Contínuo; SAFe, Nexus, LeSS, DaD; Team Topologies; Governança e OKRs",
+    "Hybrid Project Management": "Abordagens híbridas; Integração preditivo + ágil; Gestão de portfólio híbrido",
+    "Risk Management": "Identificação e análise de riscos; Plano de resposta a riscos; Monitoramento e controle",
+    "Stakeholder Management": "Análise de stakeholders; Comunicação eficaz; Engajamento e influência",
+    "Digital Transformation Foundation & Change Leadership": "Gestão de Mudanças (Kotter, ADKAR, McKinsey 7S); Scrum e Kanban aplicados à gestão de mudanças; Frameworks ágeis para mudança organizacional; Liderança e Inovação; Cultura inovadora",
+    "Business Agility & Leadership in the Digital Era": "VUCA e BANI; Mentalidade de crescimento; Domínios do Business Agility; Liderança distribuída em ambientes ágeis",
+    "Emotional Intelligence & Soft Skills for Effective Leadership": "Fundamentos de Inteligência Emocional; Comunicação e liderança; Empatia e segurança psicológica",
+    "Disruptive Innovation & Startup Leadership": "Fundamentos da Inovação Disruptiva; Mentalidade empreendedora; Lean Startup e MVP",
+    "Mastering Leadership Skills": "Visão estratégica e execução; Comunicação de alto impacto; Times de alta performance"
+  },
+  "Product Management & Digital Growth": {
+    "Product Strategy and Vision": "Visão de produto; Estratégia e roadmap; OKRs para produto; Product-Market Fit",
+    "Product Discovery": "Design Thinking; Jobs To Be Done; Research e validação; Prototipagem rápida",
+    "Agile Product Development": "Scrum para PMs; Product Backlog Building; Priorização (RICE, MoSCoW); Sprint planning",
+    "Growth Hacking & Digital Marketing": "Funil de crescimento; Testes A/B; CAC, LTV, Churn; Experimentação contínua",
+    "Data-Driven Product Management": "Analytics de produto; Métricas North Star; Cohort analysis; BI e dashboards",
+    "AI for Product Managers": "IA generativa em produtos; Prompt engineering para PMs; Ferramentas de IA para roadmap e discovery",
+    "Go-to-Market Strategy": "Lançamento de produto; Pricing; Canais de distribuição; Competitive intelligence",
+    "Emotional Intelligence & Soft Skills for Effective Leadership": "Fundamentos de Inteligência Emocional; Comunicação e liderança; Empatia e segurança psicológica",
+    "Disruptive Innovation & Startup Leadership": "Fundamentos da Inovação Disruptiva; Mentalidade empreendedora; Lean Startup e MVP",
+    "Mastering Leadership Skills": "Visão estratégica e execução; Comunicação de alto impacto; Times de alta performance"
+  },
+  "AI-Powered Digital Marketing & Growth": {
+    "Digital Growth & AI-Driven Marketing": "Fundamentos de Growth Hacking e Marketing de Performance; IA no Marketing (personalização, segmentação preditiva, automação); Ferramentas (Google Ads Smart Bidding, Meta Advantage+, HubSpot AI); Integração entre Growth e IA; Ética, Privacidade e Regulamentação (LGPD/GDPR)",
+    "Web Data Mining and Scraping": "Web Crawling e Web Scraping; Modelos de Representação de Dados; Mineração de Dados em Redes Sociais; Mineração de Opiniões e Sentimentos; Aspectos Éticos e Legais",
+    "SEO e Conteúdo com IA": "Estratégia de conteúdo; SEO técnico e semântico; IA generativa para copywriting; Automação de conteúdo",
+    "Performance Marketing": "Mídia paga e programática; Otimização de campanhas com IA; ROAS e ROI; Atribuição multicanal",
+    "CRM e Marketing Automation": "Jornada do cliente; Email marketing inteligente; Segmentação e personalização; Ferramentas de automação",
+    "Data Analytics para Marketing": "Google Analytics 4; Dashboards de marketing; Análise de cohort; Métricas de crescimento",
+    "Emotional Intelligence & Soft Skills for Effective Leadership": "Fundamentos de Inteligência Emocional; Comunicação e liderança; Empatia e segurança psicológica",
+    "Disruptive Innovation & Startup Leadership": "Fundamentos da Inovação Disruptiva; Mentalidade empreendedora; Lean Startup e MVP",
+    "Mastering Leadership Skills": "Visão estratégica e execução; Comunicação de alto impacto; Times de alta performance"
+  },
+  "Arquitetura de Soluções Digitais": {
+    "Enterprise Architecture": "Frameworks de arquitetura (TOGAF, Zachman); Alinhamento entre negócio e TI; Planejamento de capacidade; Governança de arquitetura",
+    "Cloud Architecture": "Arquiteturas multi-cloud e híbridas; Well-Architected Framework (AWS, Azure, GCP); Resiliência e disponibilidade; FinOps",
+    "Microservices and API Architecture": "Design de APIs RESTful e GraphQL; API Gateway; Service Mesh; Event-driven architecture",
+    "Security Architecture": "Zero Trust; Identity and Access Management; Criptografia; Conformidade e regulações",
+    "Data Architecture": "Data Lake, Data Warehouse, Lakehouse; Pipelines de dados; Governança e qualidade de dados",
+    "AI Architecture": "Integração de LLMs em arquiteturas corporativas; MLOps; Agentes de IA em produção",
+    "Digital Transformation Leadership": "Gestão de mudança tecnológica; Roadmap de transformação digital; Liderança técnica",
+    "Emotional Intelligence & Soft Skills for Effective Leadership": "Fundamentos de Inteligência Emocional; Comunicação e liderança; Empatia e segurança psicológica",
+    "Disruptive Innovation & Startup Leadership": "Fundamentos da Inovação Disruptiva; Mentalidade empreendedora; Lean Startup e MVP",
+    "Mastering Leadership Skills": "Visão estratégica e execução; Comunicação de alto impacto; Times de alta performance"
+  },
+  "CTO Tech Leadership Program": {
+    "Technology Strategy & Vision": "Planejamento estratégico de TI; Alinhamento tecnologia-negócio; Roadmap tecnológico; Inovação como vantagem competitiva",
+    "Engineering Leadership": "Gestão de times de engenharia; Cultura de engenharia de alto desempenho; Hiring e desenvolvimento de talentos; OKRs e métricas de engenharia",
+    "Architecture and Technical Decisions": "Trade-offs arquiteturais; Technical debt; Make vs buy; Governança técnica",
+    "Digital Transformation & Change Management": "Liderança em transformação digital; Gestão de mudança organizacional; Frameworks ágeis em escala; Comunicação executiva",
+    "Product and Technology": "Alinhamento entre produto e engenharia; Velocidade de entrega; Qualidade e confiabilidade; Experiência do desenvolvedor",
+    "Security and Risk Management": "Responsabilidade do CTO em segurança; Gestão de riscos tecnológicos; Compliance; Resposta a incidentes",
+    "Financial Management for CTOs": "FinOps; Budget de tecnologia; ROI de iniciativas tecnológicas; Apresentações para board",
+    "Emotional Intelligence & Soft Skills for Effective Leadership": "Fundamentos de Inteligência Emocional; Comunicação e liderança; Empatia e segurança psicológica",
+    "Disruptive Innovation & Startup Leadership": "Fundamentos da Inovação Disruptiva; Mentalidade empreendedora; Lean Startup e MVP",
+    "Mastering Leadership Skills": "Visão estratégica e execução; Comunicação de alto impacto; Times de alta performance"
+  },
+  "Digital Infrastructure & Cloud Operations": {
+    "Cloud Operations Fundamentals": "Gestão de operações em nuvem; Monitoramento e observabilidade; Automação de operações; SLAs e SLOs",
+    "Infrastructure as Code": "Terraform; Ansible; Pulumi; GitOps e versionamento de infraestrutura",
+    "Container Orchestration": "Kubernetes avançado; Helm charts; Service Mesh; Estratégias de deploy",
+    "Network and Security Operations": "Segurança de redes em cloud; Firewalls e WAF; Zero Trust networking; DDoS mitigation",
+    "Database Operations": "DBaaS; Alta disponibilidade; Backup e recuperação; Performance tuning",
+    "Monitoring and Observability": "Métricas, logs e traces; Alertas e dashboards; AIOps; Incident management",
+    "FinOps and Cost Optimization": "Otimização de custos em cloud; Tagging e chargeback; Rightsizing; Reserved instances",
+    "Emotional Intelligence & Soft Skills for Effective Leadership": "Fundamentos de Inteligência Emocional; Comunicação e liderança; Empatia e segurança psicológica",
+    "Disruptive Innovation & Startup Leadership": "Fundamentos da Inovação Disruptiva; Mentalidade empreendedora; Lean Startup e MVP",
+    "Mastering Leadership Skills": "Visão estratégica e execução; Comunicação de alto impacto; Times de alta performance"
+  },
+  "Executivo em Liderança Estratégica de TI": {
+    "Estratégia de TI e Negócios": "Alinhamento estratégico TI-negócio; COBIT e frameworks de governança; Planejamento estratégico de TI; Comitês e estruturas de governança",
+    "Digital Transformation Foundation & Change Leadership": "Liderança em transformação digital; Gestão de mudança (Kotter, ADKAR); Cultura de inovação; Comunicação executiva",
+    "Business Agility & Leadership in the Digital Era": "VUCA e BANI; Business Agility; Liderança distribuída; Tomada de decisão em ambientes complexos",
+    "Gestão de Pessoas e Liderança": "Desenvolvimento de talentos em TI; Cultura organizacional; Diversidade e inclusão; Gestão de conflitos",
+    "Gestão Financeira de TI": "Budget de TI; ROI e valor de negócio; FinOps; Apresentações para stakeholders",
+    "Inovação e Transformação Digital": "Ecossistemas de inovação; Parcerias estratégicas; Open innovation; Venture building",
+    "Segurança e Risco Corporativo": "Gestão de riscos de TI; Compliance; Proteção de dados; Responsabilidade executiva em segurança",
+    "Emotional Intelligence & Soft Skills for Effective Leadership": "Fundamentos de Inteligência Emocional; Comunicação e liderança; Empatia e segurança psicológica",
+    "Disruptive Innovation & Startup Leadership": "Fundamentos da Inovação Disruptiva; Mentalidade empreendedora; Lean Startup e MVP",
+    "Mastering Leadership Skills": "Visão estratégica e execução; Comunicação de alto impacto; Times de alta performance"
+  }
+};
+
+const SYSTEM = `Voce e um professor especialista em tecnologia e educacao, responsavel por criar provas substitutivas (SUB) para os MBAs da Impacta.
+
+Voce recebera o nome do curso, o nome da disciplina e os topicos reais dessa disciplina extraidos do site oficial da Impacta.
+
+Gere a prova seguindo RIGOROSAMENTE o template abaixo:
+
+---
+
+PROVA SUBSTITUTIVA (SUB)
+
+Disciplina: [NOME DA DISCIPLINA]
+Curso: MBA [NOME DO CURSO]
+Tipo de Avaliacao: Prova Substitutiva (SUB)
+Formato: Resenha Critica
+Duracao Estimada: 2h a 3h
+Valor: 10,0 pontos
+
+--------------------------------------------
+
+PROPOSTA DE RESENHA CRITICA
+
+Tema:
+"[TEMA CENTRAL impactante que sintetize os pilares da disciplina — entre aspas]"
+
+--------------------------------------------
+
+INSTRUCOES
+
+Elabore uma resenha critica, individual e autoral, com MINIMO DE 3 PAGINAS (formato A4, fonte 12, espacamento 1,5). Esta exigencia e OBRIGATORIA — resenhas com menos de 3 paginas serao desconsideradas. Para atingir o minimo de 3 paginas, cada topico deve ser desenvolvido com profundidade, incluindo exemplos concretos, analises criticas e conexoes praticas com o mercado.
+
+O texto deve articular aspectos tecnicos, analiticos e estrategicos, conectando teoria, pratica de mercado e experiencias profissionais ou academicas.
+
+--------------------------------------------
+
+TOPICOS OBRIGATORIOS
+
+A resenha DEVE contemplar TODOS os eixos abaixo, de forma coesa e argumentativa.
+
+Para cada topico real da disciplina, crie uma secao numerada com 3 a 6 subtopicos especificos e uma discussao critica:
+
+[Gere os topicos baseando-se EXCLUSIVAMENTE nos topicos reais fornecidos]
+
+--------------------------------------------
+
+REFLEXAO CRITICA FINAL
+
+Inclua obrigatoriamente:
+- Principais desafios de empresas brasileiras na area
+- Por que iniciativas nessa area frequentemente falham
+- Tensoes entre conceitos centrais da disciplina
+- Exemplos reais (nacionais e globais)
+- Conexoes com experiencias praticas da disciplina
+
+--------------------------------------------
+
+CRITERIOS DE AVALIACAO
+
+Clareza & Coesao — 2,0 pontos
+Fundamentacao Tecnica — 3,0 pontos
+Argumentacao Critica — 3,0 pontos
+Aplicacao Pratica — 1,0 ponto
+Originalidade — 1,0 ponto
+
+Total: 10,0 pontos
+
+--------------------------------------------
+
+OBSERVACOES
+
+- Trabalho individual e autoral.
+- Plagio ou uso acritico de IA implica reprovacao.
+- Citar minimo de 3 referencias.
+- Estrutura: Introducao, Desenvolvimento e Conclusao.
+
+--------------------------------------------
+
+OBJETIVO DA AVALIACAO
+
+Avaliar a capacidade do aluno de compreender os fundamentos, aplicar conceitos em contextos reais, analisar criticamente trade-offs e demonstrar pensamento sistemico orientado a resultados.`;
+
+// ── Popula select de disciplinas ─────────────────────────────────────────────
+function updateDisciplinas() {
+  const curso = document.getElementById('curso').value;
+  const sel = document.getElementById('disciplina');
+  sel.innerHTML = '';
+  if (!curso || !GRADE[curso]) {
+    sel.innerHTML = '<option value="">Selecione o curso primeiro...</option>';
+    return;
+  }
+  sel.innerHTML = '<option value="">Selecione a disciplina...</option>';
+  Object.keys(GRADE[curso]).forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d;
+    opt.textContent = d;
+    sel.appendChild(opt);
+  });
+}
+
+function setStatus(msg, type) {
+  const el = document.getElementById('status');
+  el.className = 'status show ' + type;
+  document.getElementById('statusText').textContent = msg;
+}
+
+function setLoading(on) {
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = on;
+  btn.classList.toggle('loading', on);
+}
+
+async function generate() {
+  const curso = document.getElementById('curso').value;
+  const disciplina = document.getElementById('disciplina').value;
+  if (!curso) { setStatus('Selecione o curso de MBA.', 'error'); return; }
+  if (!disciplina) { setStatus('Selecione a disciplina.', 'error'); return; }
+
+  const topicos = GRADE[curso][disciplina];
+
+  setLoading(true);
+  document.getElementById('output').style.display = 'none';
+  setStatus('Gerando prova com Claude...', 'info');
+
+  const userMsg = `Curso: ${curso}
+Disciplina: ${disciplina}
+Topicos reais da disciplina: ${topicos}
+
+Gere a prova substitutiva completa para esta disciplina.`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        system: SYSTEM,
+        messages: [{ role: 'user', content: userMsg }]
+      })
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json();
+      throw new Error(err.error && err.error.message ? err.error.message : 'Erro ' + resp.status);
+    }
+
+    const data = await resp.json();
+    const result = data.content[0].text;
+
+    document.getElementById('outputName').textContent = disciplina + ' · ' + curso;
+    document.getElementById('outputBody').textContent = result;
+    document.getElementById('output').style.display = 'block';
+    setStatus('Prova gerada com sucesso!', 'success');
+    document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+
+  } catch(e) {
+    setStatus('Erro: ' + e.message, 'error');
+  } finally {
+    setLoading(false);
+  }
+}
+
+function copyOut(btn) {
+  navigator.clipboard.writeText(document.getElementById('outputBody').textContent).then(function() {
+    var orig = btn.textContent;
+    btn.textContent = '✓ Copiado';
+    setTimeout(function(){ btn.textContent = orig; }, 2000);
+  });
+}
+
+function downloadOut() {
+  var text = document.getElementById('outputBody').textContent;
+  var name = document.getElementById('disciplina').value.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  var blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'prova-sub-' + name + '.txt';
+  a.click();
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) generate();
+});
+</script>
+</body>
+</html>
