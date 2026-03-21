@@ -71,6 +71,15 @@ select option{background:#1c1c1c;color:#fff}
 
   <div class="card">
     <div class="field">
+      <label>API Key</label>
+      <div style="position:relative">
+        <input type="password" id="apiKey" placeholder="sk-ant-api03-..." autocomplete="off" style="padding-right:72px" />
+        <button onclick="toggleKey()" id="toggleBtn" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:11px;color:var(--text3);font-family:Inter,sans-serif;padding:4px 6px;border-radius:4px" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text3)'">mostrar</button>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:5px">Obtenha em console.anthropic.com &rarr; API Keys. N&atilde;o &eacute; armazenada.</div>
+    </div>
+    <div class="divider" style="margin:16px 0"></div>
+    <div class="field">
       <label>Curso de MBA</label>
       <select id="curso" onchange="updateDisciplinas()">
         <option value="">Selecione o curso...</option>
@@ -126,7 +135,7 @@ select option{background:#1c1c1c;color:#fff}
 </div>
 
 <script>
-const API_KEY = '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';
+// API key is entered by the user in the form
 
 // ── Grade curricular completa embutida ──────────────────────────────────────
 const GRADE = {
@@ -446,6 +455,8 @@ function setLoading(on) {
 }
 
 async function generate() {
+  const apiKey = document.getElementById('apiKey').value.trim();
+  if (!apiKey) { setStatus('Insira sua Anthropic API Key.', 'error'); return; }
   const curso = document.getElementById('curso').value;
   const disciplina = document.getElementById('disciplina').value;
   if (!curso) { setStatus('Selecione o curso de MBA.', 'error'); return; }
@@ -468,7 +479,7 @@ Gere a prova substitutiva completa para esta disciplina.`;
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': API_KEY,
+        'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
         'anthropic-dangerous-direct-browser-access': 'true'
       },
