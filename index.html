@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Provas SUB — MBA Impacta</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -53,7 +54,7 @@ select option{background:#1c1c1c;color:#fff}
 .output-btns{display:flex;gap:6px}
 .btn-xs{height:29px;padding:0 12px;border-radius:6px;font-size:12px;font-weight:500;font-family:'Inter',sans-serif;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--text2);transition:all .15s}
 .btn-xs:hover{border-color:#fff;color:#fff}
-.output-body{padding:28px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.85;color:#b0b0b0;white-space:pre-wrap;max-height:560px;overflow-y:auto}
+.output-body{padding:32px 36px;font-family:'Inter',sans-serif;font-size:14px;line-height:1.8;color:#d0d0d0;max-height:620px;overflow-y:auto}.output-body h3{font-size:16px;font-weight:700;color:#fff;margin:24px 0 10px;letter-spacing:-.01em}.output-body h3:first-child{margin-top:0}.output-body h4{font-size:13px;font-weight:600;color:#a0a0a0;text-transform:uppercase;letter-spacing:.06em;margin:20px 0 8px}.output-body p{margin:0 0 10px;color:#c0c0c0}.output-body ul{margin:4px 0 12px 0;padding-left:0;list-style:none}.output-body ul li{padding:4px 0 4px 16px;position:relative;color:#c0c0c0;border-bottom:1px solid #1e1e1e}.output-body ul li:last-child{border-bottom:none}.output-body ul li::before{content:'—';position:absolute;left:0;color:#444}.output-body strong{color:#fff;font-weight:600}.output-body em{color:#888}
 .output-body::-webkit-scrollbar{width:4px}
 .output-body::-webkit-scrollbar-track{background:transparent}
 .output-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
@@ -346,77 +347,66 @@ const GRADE = {
 
 const SYSTEM = `Voce e um professor especialista em tecnologia e educacao, responsavel por criar provas substitutivas (SUB) para os MBAs da Impacta.
 
-Voce recebera o nome do curso, o nome da disciplina e os topicos reais dessa disciplina extraidos do site oficial da Impacta.
+Voce recebera o nome do curso, o nome da disciplina e os topicos reais dessa disciplina.
 
-Gere a prova seguindo RIGOROSAMENTE o template abaixo:
+Gere a prova seguindo RIGOROSAMENTE a formatacao do template abaixo. O resultado deve ser identico em estrutura ao modelo — com os mesmos emojis nos titulos, negrito nos termos importantes, bullets com ponto e virgula, e as mesmas 4 secoes (Proposta de Resenha, Instrucoes, Criterios de Avaliacao, Observacao).
+
+TEMPLATE:
+
+### **📄 Prova Substitutiva — Disciplina: [NOME DA DISCIPLINA]**
+
+#### **📝 Proposta de Resenha:**
+
+**Tema:**
+**"[TEMA CENTRAL — frase impactante entre aspas duplas que sintetize os pilares da disciplina]"**
+
+#### **📚 Instruções:**
+
+Elabore uma **resenha crítica com no mínimo 3 páginas (formato A4, fonte 12, espaçamento 1,5)** refletindo sobre [breve descricao do escopo da disciplina em uma frase].
+
+A resenha deve contemplar:
+
+- [Bullet especifico ao topico 1 da disciplina — escrito como instrucao ao aluno, terminando com ponto e virgula];
+
+- [Bullet especifico ao topico 2 — conceitos-chave, ferramentas, tecnicas ou praticas da disciplina];
+
+- [Bullet especifico ao topico 3 — analise critica, desafios, comparacoes ou trade-offs relevantes];
+
+- [Bullet especifico ao topico 4 — aplicacoes praticas, exemplos reais, casos de mercado];
+
+- [Bullet especifico ao topico 5 — tendencias, impactos organizacionais ou reflexoes estrategicas];
+
+- [Adicione mais bullets se a disciplina tiver mais topicos relevantes — maximo 8 bullets no total];
+
+- Conexões com os conteúdos, práticas e discussões vivenciados durante a disciplina [NOME DA DISCIPLINA].
+
+#### **✅ Critérios de Avaliação:**
+
+- Clareza e coesão textual;
+
+- Capacidade crítica e reflexiva;
+
+- Relacionamento com os conceitos estudados na disciplina;
+
+- Estrutura da resenha (introdução, desenvolvimento e conclusão);
+
+- Originalidade e profundidade da análise.
+
+#### **📌 Observação:**
+
+A resenha deve ser **individual e autoral**. Utilize exemplos reais sempre que possível para enriquecer a análise. Citações devem ser referenciadas adequadamente. Trabalhos com indícios de plágio ou uso acrítico de IA serão desconsiderados.
 
 ---
 
-PROVA SUBSTITUTIVA (SUB)
-
-Disciplina: [NOME DA DISCIPLINA]
-Curso: MBA [NOME DO CURSO]
-Tipo de Avaliacao: Prova Substitutiva (SUB)
-Formato: Resenha Critica
-Duracao Estimada: 2h a 3h
-Valor: 10,0 pontos
-
---------------------------------------------
-
-PROPOSTA DE RESENHA CRITICA
-
-Tema:
-"[TEMA CENTRAL impactante que sintetize os pilares da disciplina — entre aspas]"
-
---------------------------------------------
-
-INSTRUCOES
-
-Elabore uma resenha critica, individual e autoral, com MINIMO DE 3 PAGINAS (formato A4, fonte 12, espacamento 1,5). Esta exigencia e OBRIGATORIA — resenhas com menos de 3 paginas serao desconsideradas. Para atingir o minimo de 3 paginas, cada topico deve ser desenvolvido com profundidade, incluindo exemplos concretos, analises criticas e conexoes praticas com o mercado.
-
-O texto deve articular aspectos tecnicos, analiticos e estrategicos, conectando teoria, pratica de mercado e experiencias profissionais ou academicas.
-
---------------------------------------------
-
-TOPICOS OBRIGATORIOS
-
-A resenha DEVE contemplar TODOS os eixos abaixo, de forma coesa e argumentativa.
-
-Para cada topico real da disciplina, crie uma secao numerada com 3 a 6 subtopicos especificos e uma discussao critica:
-
-[Gere os topicos baseando-se EXCLUSIVAMENTE nos topicos reais fornecidos]
-
---------------------------------------------
-
-REFLEXAO CRITICA FINAL
-
-Inclua obrigatoriamente:
-- Principais desafios de empresas brasileiras na area
-- Por que iniciativas nessa area frequentemente falham
-- Tensoes entre conceitos centrais da disciplina
-- Exemplos reais (nacionais e globais)
-- Conexoes com experiencias praticas da disciplina
-
---------------------------------------------
-
-CRITERIOS DE AVALIACAO
-
-Clareza & Coesao — 2,0 pontos
-Fundamentacao Tecnica — 3,0 pontos
-Argumentacao Critica — 3,0 pontos
-Aplicacao Pratica — 1,0 ponto
-Originalidade — 1,0 ponto
-
-Total: 10,0 pontos
-
---------------------------------------------
-
-OBSERVACOES
-
-- Trabalho individual e autoral.
-- Plagio ou uso acritico de IA implica reprovacao.
-- Citar minimo de 3 referencias.
-- Estrutura: Introducao, Desenvolvimento e Conclusao.
+REGRAS OBRIGATORIAS:
+1. Use ### para o titulo principal e #### para os 4 subtitulos
+2. Negrito (**texto**) nos titulos dos subtitulos e nos termos tecnicos importantes dentro dos bullets
+3. Emojis SOMENTE nos titulos: 📄 no titulo, 📝 em Proposta, 📚 em Instrucoes, ✅ em Criterios, 📌 em Observacao
+4. Todos os bullets terminam com ponto e virgula, exceto o ultimo que termina com ponto final
+5. Os bullets de Instrucoes devem ser ESPECIFICOS aos topicos reais da disciplina fornecidos — nunca use topicos genericos
+6. Escreva em portugues correto com acentuacao completa
+7. NAO use tabelas, NAO use separadores com tracos (---), NAO adicione secoes extras
+8. O ultimo bullet de Instrucoes deve sempre ser a conexao com a disciplina
 
 --------------------------------------------
 
@@ -500,7 +490,8 @@ Gere a prova substitutiva completa para esta disciplina.`;
     const result = data.content[0].text;
 
     document.getElementById('outputName').textContent = disciplina + ' · ' + curso;
-    document.getElementById('outputBody').textContent = result;
+    // render markdown
+    document.getElementById('outputBody').innerHTML = marked.parse(result);
     document.getElementById('output').style.display = 'block';
     setStatus('Prova gerada com sucesso!', 'success');
     document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
@@ -513,7 +504,7 @@ Gere a prova substitutiva completa para esta disciplina.`;
 }
 
 function copyOut(btn) {
-  navigator.clipboard.writeText(document.getElementById('outputBody').textContent).then(function() {
+  navigator.clipboard.writeText(document.getElementById('outputBody').innerText).then(function() {
     var orig = btn.textContent;
     btn.textContent = '✓ Copiado';
     setTimeout(function(){ btn.textContent = orig; }, 2000);
@@ -521,7 +512,7 @@ function copyOut(btn) {
 }
 
 function downloadOut() {
-  var text = document.getElementById('outputBody').textContent;
+  var text = document.getElementById('outputBody').innerText;
   var name = document.getElementById('disciplina').value.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
   var blob = new Blob([text], {type:'text/plain;charset=utf-8'});
   var a = document.createElement('a');
