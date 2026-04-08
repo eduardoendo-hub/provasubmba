@@ -69,7 +69,6 @@ select option{background:#1c1c1c;color:#fff}
     <h1>Gerador de<br><span>Provas SUB</span></h1>
     <p>Selecione o curso e informe a disciplina.<br>A prova é gerada com os tópicos reais da grade curricular.</p>
   </div>
-
   <div class="card">
     <div class="field">
       <label>API Key</label>
@@ -107,6 +106,11 @@ select option{background:#1c1c1c;color:#fff}
         <option value="">Selecione o curso primeiro...</option>
       </select>
     </div>
+    <div class="field" style="margin-top:4px">
+      <label>Conteúdo Personalizado <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">(opcional — sobrepõe os tópicos da grade)</span></label>
+      <textarea id="conteudoCustom" placeholder="Cole aqui os tópicos, ementa ou conteúdo da disciplina..." style="width:100%;min-height:110px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;line-height:1.6;outline:none;resize:vertical;transition:border-color .15s,background .15s" onfocus="this.style.borderColor='var(--border2)';this.style.background='#222'" onblur="this.style.borderColor='var(--border)';this.style.background='var(--surface2)'"></textarea>
+      <div style="font-size:11px;color:var(--text3);margin-top:5px">Se preenchido, este conteúdo será usado no lugar dos tópicos cadastrados na grade.</div>
+    </div>
     <div class="divider"></div>
     <button class="btn" id="generateBtn" onclick="generate()">
       <div class="spinner"></div>
@@ -117,7 +121,6 @@ select option{background:#1c1c1c;color:#fff}
       <span id="statusText"></span>
     </div>
   </div>
-
   <div class="output" id="output">
     <div class="output-head">
       <div class="output-info">
@@ -131,13 +134,10 @@ select option{background:#1c1c1c;color:#fff}
     </div>
     <div class="output-body" id="outputBody"></div>
   </div>
-
   <div class="footer">Impacta &middot; Gerador de Provas SUB &middot; Powered by Claude Sonnet</div>
 </div>
-
 <script>
 // API key is entered by the user in the form
-
 // ── Grade curricular completa embutida ──────────────────────────────────────
 const GRADE = {
   "AI-Engineering & Multi-Agents": {
@@ -244,6 +244,7 @@ const GRADE = {
     "Cloud Infrastructure Automation": "DevXP; Terraform; Ansible; Infrastructure Pipeline",
     "Database Reliability Engineer": "NoSQL Database; High Availability e Load Balancing; Replication e Disaster Recovery; Database Observability",
     "Agile and Scaling Frameworks": "Scrum; Kanban; SAFe; LeSS; Team Topologies; OKRs",
+    "Test Automation Engineering With GenAI": "Introdução à Qualidade de Software; Processos de qualidade (critérios de aceite, elaboração de cenários de teste); Aplicando TDD com o jUnit; O Profissional de QA; Aplicando testes na CI e BDD; Testes não funcionais e de performance; Testes automatizados; Cypress (selenium); K6 (jmeter); Cobertura de Código com Sonar; Testes de prompts e contextos (Prompt Testing); Avaliação de agentes com datasets reais e sintéticos; Snapshot testing para validação de respostas; Testes determinísticos e estratégias para LLMs não-determinísticos; Principais ferramentas (ex: LangSmith)",
     "Emotional Intelligence & Soft Skills for Effective Leadership": "Fundamentos de Inteligência Emocional; Comunicação e liderança; Empatia e segurança psicológica",
     "Disruptive Innovation & Startup Leadership": "Fundamentos da Inovação Disruptiva; Mentalidade empreendedora; Lean Startup e MVP",
     "Mastering Leadership Skills": "Visão estratégica e execução; Comunicação de alto impacto; Times de alta performance"
@@ -344,60 +345,33 @@ const GRADE = {
     "Mastering Leadership Skills": "Visão estratégica e execução; Comunicação de alto impacto; Times de alta performance"
   }
 };
-
 const SYSTEM = `Voce e um professor especialista em tecnologia e educacao, responsavel por criar provas substitutivas (SUB) para os MBAs da Impacta.
-
 Voce recebera o nome do curso, o nome da disciplina e os topicos reais dessa disciplina.
-
 Gere a prova seguindo RIGOROSAMENTE a formatacao do template abaixo. O resultado deve ser identico em estrutura ao modelo — com os mesmos emojis nos titulos, negrito nos termos importantes, bullets com ponto e virgula, e as mesmas 4 secoes (Proposta de Resenha, Instrucoes, Criterios de Avaliacao, Observacao).
-
 TEMPLATE:
-
 ### **📄 Prova Substitutiva — Disciplina: [NOME DA DISCIPLINA]**
-
 #### **📝 Proposta de Resenha:**
-
 **Tema:**
 **"[TEMA CENTRAL — frase impactante entre aspas duplas que sintetize os pilares da disciplina]"**
-
 #### **📚 Instruções:**
-
 Elabore uma **resenha crítica com no mínimo 3 páginas (formato A4, fonte 12, espaçamento 1,5)** refletindo sobre [breve descricao do escopo da disciplina em uma frase].
-
 A resenha deve contemplar:
-
 - [Bullet especifico ao topico 1 da disciplina — escrito como instrucao ao aluno, terminando com ponto e virgula];
-
 - [Bullet especifico ao topico 2 — conceitos-chave, ferramentas, tecnicas ou praticas da disciplina];
-
 - [Bullet especifico ao topico 3 — analise critica, desafios, comparacoes ou trade-offs relevantes];
-
 - [Bullet especifico ao topico 4 — aplicacoes praticas, exemplos reais, casos de mercado];
-
 - [Bullet especifico ao topico 5 — tendencias, impactos organizacionais ou reflexoes estrategicas];
-
 - [Adicione mais bullets se a disciplina tiver mais topicos relevantes — maximo 8 bullets no total];
-
 - Conexões com os conteúdos, práticas e discussões vivenciados durante a disciplina [NOME DA DISCIPLINA].
-
 #### **✅ Critérios de Avaliação:**
-
 - Clareza e coesão textual;
-
 - Capacidade crítica e reflexiva;
-
 - Relacionamento com os conceitos estudados na disciplina;
-
 - Estrutura da resenha (introdução, desenvolvimento e conclusão);
-
 - Originalidade e profundidade da análise.
-
 #### **📌 Observação:**
-
 A resenha deve ser **individual e autoral**. Utilize exemplos reais sempre que possível para enriquecer a análise. Citações devem ser referenciadas adequadamente. Trabalhos com indícios de plágio ou uso acrítico de IA serão desconsiderados.
-
 ---
-
 REGRAS OBRIGATORIAS:
 1. Use ### para o titulo principal e #### para os 4 subtitulos
 2. Negrito (**texto**) nos titulos dos subtitulos e nos termos tecnicos importantes dentro dos bullets
@@ -407,13 +381,9 @@ REGRAS OBRIGATORIAS:
 6. Escreva em portugues correto com acentuacao completa
 7. NAO use tabelas, NAO use separadores com tracos (---), NAO adicione secoes extras
 8. O ultimo bullet de Instrucoes deve sempre ser a conexao com a disciplina
-
 --------------------------------------------
-
 OBJETIVO DA AVALIACAO
-
 Avaliar a capacidade do aluno de compreender os fundamentos, aplicar conceitos em contextos reais, analisar criticamente trade-offs e demonstrar pensamento sistemico orientado a resultados.`;
-
 // ── Popula select de disciplinas ─────────────────────────────────────────────
 function updateDisciplinas() {
   const curso = document.getElementById('curso').value;
@@ -431,19 +401,16 @@ function updateDisciplinas() {
     sel.appendChild(opt);
   });
 }
-
 function setStatus(msg, type) {
   const el = document.getElementById('status');
   el.className = 'status show ' + type;
   document.getElementById('statusText').textContent = msg;
 }
-
 function setLoading(on) {
   const btn = document.getElementById('generateBtn');
   btn.disabled = on;
   btn.classList.toggle('loading', on);
 }
-
 async function generate() {
   const apiKey = document.getElementById('apiKey').value.trim();
   if (!apiKey) { setStatus('Insira sua Anthropic API Key.', 'error'); return; }
@@ -451,19 +418,15 @@ async function generate() {
   const disciplina = document.getElementById('disciplina').value;
   if (!curso) { setStatus('Selecione o curso de MBA.', 'error'); return; }
   if (!disciplina) { setStatus('Selecione a disciplina.', 'error'); return; }
-
-  const topicos = GRADE[curso][disciplina];
-
+  const conteudoCustom = document.getElementById('conteudoCustom').value.trim();
+  const topicos = conteudoCustom || GRADE[curso][disciplina];
   setLoading(true);
   document.getElementById('output').style.display = 'none';
   setStatus('Gerando prova com Claude...', 'info');
-
   const userMsg = `Curso: ${curso}
 Disciplina: ${disciplina}
 Topicos reais da disciplina: ${topicos}
-
 Gere a prova substitutiva completa para esta disciplina.`;
-
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -480,29 +443,24 @@ Gere a prova substitutiva completa para esta disciplina.`;
         messages: [{ role: 'user', content: userMsg }]
       })
     });
-
     if (!resp.ok) {
       const err = await resp.json();
       throw new Error(err.error && err.error.message ? err.error.message : 'Erro ' + resp.status);
     }
-
     const data = await resp.json();
     const result = data.content[0].text;
-
     document.getElementById('outputName').textContent = disciplina + ' · ' + curso;
     // render markdown
     document.getElementById('outputBody').innerHTML = marked.parse(result);
     document.getElementById('output').style.display = 'block';
     setStatus('Prova gerada com sucesso!', 'success');
     document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
-
   } catch(e) {
     setStatus('Erro: ' + e.message, 'error');
   } finally {
     setLoading(false);
   }
 }
-
 function copyOut(btn) {
   navigator.clipboard.writeText(document.getElementById('outputBody').innerText).then(function() {
     var orig = btn.textContent;
@@ -510,7 +468,6 @@ function copyOut(btn) {
     setTimeout(function(){ btn.textContent = orig; }, 2000);
   });
 }
-
 function downloadOut() {
   var text = document.getElementById('outputBody').innerText;
   var name = document.getElementById('disciplina').value.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
@@ -520,10 +477,20 @@ function downloadOut() {
   a.download = 'prova-sub-' + name + '.txt';
   a.click();
 }
-
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) generate();
 });
+function toggleKey() {
+  const input = document.getElementById('apiKey');
+  const btn = document.getElementById('toggleBtn');
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = 'ocultar';
+  } else {
+    input.type = 'password';
+    btn.textContent = 'mostrar';
+  }
+}
 </script>
 </body>
 </html>
