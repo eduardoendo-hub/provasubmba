@@ -438,7 +438,8 @@ Gere a prova substitutiva completa para esta disciplina.`;
       },
       body: JSON.stringify({
         model: 'claude-sonnet-5',
-        max_tokens: 4000,
+        max_tokens: 8000,
+        thinking: { type: 'disabled' },
         system: SYSTEM,
         messages: [{ role: 'user', content: userMsg }]
       })
@@ -448,12 +449,26 @@ Gere a prova substitutiva completa para esta disciplina.`;
       throw new Error(err.error && err.error.message ? err.error.message : 'Erro ' + resp.status);
     }
     const data = await resp.json();
-    const result = data.content[0].text;
+    if (data.stop_reason === 'refusal') {
+      throw new Error('O modelo recusou a solicitação. Ajuste o conteúdo e tente novamente.');
+    }
+    // content pode conter blocos que não são de texto (ex.: thinking) — concatena só os de texto
+    const result = (data.content || [])
+      .filter(function(b) { return b.type === 'text' && b.text; })
+      .map(function(b) { return b.text; })
+      .join('\n');
+    if (!result) {
+      throw new Error('A resposta veio sem texto (stop_reason: ' + data.stop_reason + ').');
+    }
     document.getElementById('outputName').textContent = disciplina + ' · ' + curso;
     // render markdown
     document.getElementById('outputBody').innerHTML = marked.parse(result);
     document.getElementById('output').style.display = 'block';
-    setStatus('Prova gerada com sucesso!', 'success');
+    if (data.stop_reason === 'max_tokens') {
+      setStatus('Prova gerada, mas pode ter sido cortada por limite de tokens.', 'error');
+    } else {
+      setStatus('Prova gerada com sucesso!', 'success');
+    }
     document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
   } catch(e) {
     setStatus('Erro: ' + e.message, 'error');
